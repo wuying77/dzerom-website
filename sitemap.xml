@@ -40,7 +40,7 @@
   </url>
   <!-- 动态页面 -->
   <url>
-    <loc>https://dzero.ct.ws/massage_board/save_message.php</loc>
+    <loc>https://dzero.ct.ws/massage_board/save_message.html</loc>
     <lastmod>2025-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
