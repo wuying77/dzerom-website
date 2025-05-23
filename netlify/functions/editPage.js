@@ -7,7 +7,6 @@ exports.handler = async (event) => {
   try {
     const { path, content } = JSON.parse(event.body);
 
-    // 1. 先获取文件信息，拿 sha
     const { data: fileData } = await octokit.repos.getContent({
       owner: 'wuying77',
       repo: 'dzerom-website',
@@ -16,7 +15,6 @@ exports.handler = async (event) => {
 
     const sha = fileData.sha;
 
-    // 2. 更新文件（必须带 sha）
     await octokit.repos.createOrUpdateFileContents({
       owner: 'wuying77',
       repo: 'dzerom-website',
