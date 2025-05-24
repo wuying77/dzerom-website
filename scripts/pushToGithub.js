@@ -1,6 +1,12 @@
 const { execSync } = require('child_process');
+HEAD
 
 const BLOG_REPO_PATH = 'F:/dzerom.xin'; // 确保路径正确
+
+const path = require('path');
+
+const BLOG_REPO_PATH = 'F:/dzerom.xin'; // 你的本地博客仓库路径
+0a37b59 (初始化项目)
 const COMMIT_MSG = process.argv[2] || 'auto: 更新AI生成内容';
 
 function pushToGithub() {
