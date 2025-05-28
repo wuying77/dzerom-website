@@ -1,5 +1,0 @@
-[2025-01-08 05:21:36] [Roosendaal] ni hao
-[2025-01-08 05:40:27] [Roosendaal] ni hao
-[2025-01-08 08:17:56] [Shanghai] test
-[2025-01-08 08:20:06] [Shanghai] test
-[2025-01-08 08:57:52] [Shanghai] test
