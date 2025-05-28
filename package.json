@@ -1,18 +1,33 @@
 {
   "name": "my-ai-web",
   "version": "1.0.0",
+  "description": "AI自动生成博客系统，支持图片上传与AI分析",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "ai",
+    "blog",
+    "express",
+    "image-upload",
+    "moonshot",
+    "kimi"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "mime-types": "^2.1.35",
     "multer": "^2.0.0",
-    "openai": "^4.103.0"
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
