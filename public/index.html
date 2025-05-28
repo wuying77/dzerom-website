@@ -43,7 +43,7 @@
     .msg-text { background: #fff; border-radius: 8px; padding: 12px 16px; border: 1px solid #e5e5e5; }
     .chat-input-area {
       display: flex; padding: 16px 24px; background: #fff; border-top: 1px solid #e5e5e5;
-      align-items: center;
+      align-items: flex-end;
       gap: 10px;
     }
     #fileInput {
@@ -67,9 +67,68 @@
     #uploadBtn:active {
       background: #bae7ff;
     }
-    #msg-input { flex: 1; font-size: 16px; padding: 10px; border-radius: 6px; border: 1px solid #ccc; outline: none; }
-    #send-btn { margin-left: 0; padding: 0 24px; font-size: 16px; border: none; background: #10b981; color: #fff; border-radius: 6px; cursor: pointer; height: 38px; }
-    #send-btn:active { background: #11996b; }
+    /* 自适应高度textarea样式 */
+    #msg-input {
+      flex: 1;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      min-height: 36px;
+      max-height: 180px;
+      resize: none;
+      overflow-y: auto;
+      line-height: 20px;
+      box-sizing: border-box;
+      transition: height 0.1s;
+      background: #fff;
+    }
+    /* 优化发送按钮和取消状态 */
+    #send-btn {
+      margin-left: 0;
+      padding: 0 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      height: 38px;
+      transition: background 0.2s;
+      background: #10b981;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      position: relative;
+    }
+    #send-btn.send-cancel {
+      background: #e74c3c !important;
+      min-width: 38px;
+      padding: 0;
+      justify-content: center;
+    }
+    #send-btn .btn-label { display: inline; }
+    #send-btn.send-cancel .btn-label { display: none; }
+    #send-btn .red-dot {
+      width: 16px; height: 16px; border-radius: 4px; background: #fff0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    #send-btn .red-dot::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #e74c3c;
+      border-radius: 50%;
+      box-shadow: 0 0 7px #e74c3c88;
+      animation: blink 1s infinite alternate;
+    }
+    @keyframes blink {
+      from { opacity: 1; }
+      to { opacity: 0.5; }
+    }
     .msg-text img {
       max-width: 120px;
       max-height: 120px;
@@ -81,6 +140,11 @@
     .msg-text a {
       color: #1a73e8;
       text-decoration: underline;
+    }
+    .error-message {
+      color: #e74c3c;
+      margin-top: 8px;
+      font-size: 15px;
     }
   </style>
 </head>
@@ -101,38 +165,35 @@
         <button id="uploadBtn" type="button" title="上传附件">
           📎
         </button>
-        <input id="msg-input" type="text" placeholder="请输入你想让AI做的事，比如“生成一篇科幻风格首页”..." autocomplete="off"/>
-        <button id="send-btn">发送</button>
+        <textarea id="msg-input" placeholder="请输入你想让AI做的事，比如“生成一篇科幻风格首页”...（按 Enter 发送，Shift+Enter 换行）" autocomplete="off" rows="1"></textarea>
+        <button id="send-btn" class="send-btn"><span class="btn-label">发送</span></button>
       </div>
+      <div id="error-msg" class="error-message"></div>
     </div>
   </div>
   <script>
-    // 本地会话存储结构: {id: {id, title, messages: [{role, content}], date}}
     let conversations = {}; // 全部会话
     let currentConvId = null;
+    let controller = null; // 用于取消fetch
+    let isLoading = false;
 
-    // 工具：生成唯一对话ID
     function newConvId() {
       const d = new Date();
       return d.toISOString().slice(0,10) + '_' + Date.now();
     }
 
-    // 保存到localStorage
     function saveConvs() {
       localStorage.setItem('conversations', JSON.stringify(conversations));
     }
 
-    // 加载历史会话
     function loadConvs() {
       try {
         conversations = JSON.parse(localStorage.getItem('conversations') || '{}');
       } catch { conversations = {}; }
     }
 
-    // 渲染左侧会话栏
     function renderConversationList() {
       const convList = document.getElementById('convList');
-      // 按时间降序排列
       const sorted = Object.values(conversations).sort((a, b) => b.date - a.date);
       convList.innerHTML = sorted.map(conv => {
         const title = conv.title || (conv.messages[0]?.content.slice(0, 16) || "新对话");
@@ -143,7 +204,6 @@
       }).join('');
     }
 
-    // 渲染聊天内容，支持图片/附件
     function renderChatWindow() {
       const chatWindow = document.getElementById('chatWindow');
       const conv = conversations[currentConvId];
@@ -158,7 +218,6 @@
         let label = '';
         if(msg.role === 'user') label = '<div class="msg-user">你</div>';
         if(msg.role === 'ai') label = '<div class="msg-ai">Kimi</div>';
-        // Markdown图片转img，附件转链接
         let html = msg.content
           .replace(/!\[.*?\]\((.*?)\)/g, (match, url) => `<img src="${url}" alt="图片">`)
           .replace(/\[附件\]\((.*?)\)/g, (match, url) => `<a href="${url}" target="_blank">附件下载</a>`);
@@ -168,7 +227,6 @@
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    // 新建对话
     function newConversation() {
       const id = newConvId();
       conversations[id] = {
@@ -183,49 +241,103 @@
       renderChatWindow();
     }
 
-    // 切换对话
     function selectConversation(id) {
       currentConvId = id;
       renderConversationList();
       renderChatWindow();
     }
 
-    // 添加消息
     function appendMsg(role, text) {
       const conv = conversations[currentConvId];
       if (!conv) return;
       conv.messages.push({role, content: text});
       conv.date = Date.now();
-      // 自动设置标题为用户首句
       if (conv.messages.length === 1 && role === 'user') conv.title = text.slice(0, 16);
       saveConvs();
       renderConversationList();
       renderChatWindow();
     }
 
+    // 智能自适应高度
+    const msgInput = document.getElementById('msg-input');
+    function autoResizeTextarea() {
+      msgInput.style.height = 'auto';
+      msgInput.style.height = Math.min(msgInput.scrollHeight, 180) + 'px';
+    }
+    msgInput.addEventListener('input', autoResizeTextarea);
+    window.addEventListener('resize', autoResizeTextarea);
+    autoResizeTextarea();
+
+    // 支持shift+enter换行，enter发送
+    msgInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        send();
+        e.preventDefault();
+      }
+    });
+
+    // 发送按钮和取消逻辑
+    function setLoading(loading) {
+      isLoading = loading;
+      const sendBtn = document.getElementById('send-btn');
+      if (loading) {
+        sendBtn.classList.add('send-cancel');
+        sendBtn.innerHTML = `<span class="red-dot"></span>`;
+        sendBtn.title = "取消";
+      } else {
+        sendBtn.classList.remove('send-cancel');
+        sendBtn.innerHTML = `<span class="btn-label">发送</span>`;
+        sendBtn.title = "";
+      }
+      document.getElementById('msg-input').disabled = loading;
+    }
+
+    document.getElementById('send-btn').onclick = function() {
+      if (isLoading) {
+        // 取消行为
+        if (controller) controller.abort();
+        setLoading(false);
+        document.getElementById('error-msg').innerText = '已取消生成。';
+      } else {
+        send();
+      }
+    };
+
     // 发送消息
     function send() {
+      if (isLoading) return;
       const msgInput = document.getElementById('msg-input');
       const text = msgInput.value.trim();
       if (!text) return;
       appendMsg('user', text);
       msgInput.value = '';
+      autoResizeTextarea();
+      setLoading(true);
+
+      document.getElementById('error-msg').innerText = '';
+      controller = new AbortController();
+
       fetch('/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({msg: text})
+        body: JSON.stringify({msg: text}),
+        signal: controller.signal
       })
       .then(r=>r.json())
       .then(res=>{
-        appendMsg('ai', res.reply || 'AI没有返回内容');
+        if (res.reply) {
+          appendMsg('ai', res.reply);
+        } else {
+          appendMsg('ai', 'AI没有返回内容');
+        }
+        setLoading(false);
       })
       .catch(e=>{
         appendMsg('ai', '服务出错，请稍后再试');
+        document.getElementById('error-msg').innerText = '发送失败，可点击红色按钮终止本次生成。';
+        setLoading(false);
       });
     }
-
-    document.getElementById('send-btn').onclick = send;
-    document.getElementById('msg-input').onkeydown = (e)=>{ if(e.key==='Enter') { send(); e.preventDefault(); } }
 
     // 附件上传相关
     document.getElementById('uploadBtn').onclick = function() {
@@ -245,13 +357,13 @@
       .then(r=>r.json())
       .then(res=>{
         if (res.url) {
-          // 上传成功，自动插入图片/附件链接到输入框
           const msgInput = document.getElementById('msg-input');
           if (/\.(png|jpg|jpeg|gif|webp)$/i.test(res.url)) {
             msgInput.value += `![图片](${res.url}) `;
           } else {
             msgInput.value += `[附件](${res.url}) `;
           }
+          autoResizeTextarea();
           alert('上传成功：' + res.url);
         } else {
           alert('上传失败！');
@@ -266,12 +378,10 @@
     if (Object.keys(conversations).length === 0) {
       newConversation();
     } else {
-      // 默认选择最新的
       const ids = Object.keys(conversations).sort((a,b)=>conversations[b].date-conversations[a].date);
       selectConversation(ids[0]);
     }
 
-    // 欢迎语只在空会话时显示
     if (conversations[currentConvId].messages.length === 0) appendMsg('ai', '你好，我是Kimi，可以帮你自动生成并更新博客页面！');
   </script>
 </body>
