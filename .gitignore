@@ -1,18 +1,7 @@
-# nodejs依赖包，不要上传
 node_modules/
-
-# 环境变量配置，一定不要上传，防止泄露API KEY等敏感信息
 .env
-
-# 日志文件
 *.log
-
-# Mac OS系统文件
 .DS_Store
-
-# 上传的图片目录（如有大体积临时图片，不想纳入版本管理可以加上）
 public/uploads/
-
-# 备份、临时文件
 *.bak
 *.tmp
