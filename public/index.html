@@ -4,275 +4,48 @@
   <meta charset="UTF-8">
   <title>AI自动生成博客系统</title>
   <style>
-    body { margin: 0; font-family: "Segoe UI", "PingFang SC", Arial, sans-serif; background: #f6f8fa;}
-    .container { display: flex; height: 100vh; }
-    .sidebar {
-      width: 220px; background: #fff; border-right: 1px solid #e5e5e5;
-      display: flex; flex-direction: column;
-    }
-    .sidebar h2 { font-size: 18px; margin: 18px 0 10px 20px; }
-    .conversation-list { flex: 1; overflow-y: auto; }
-    .conversation {
-      padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #f2f2f2;
-      transition: background 0.2s;
-      text-align: left;
-      background: #fff;
-      outline: none;
-      border: none;
-      width: 100%;
-      font-size: 15px;
-    }
-    .conversation.active, .conversation:hover { background: #f5f7fa; }
-    .new-btn {
-      background: #10b981; color: #fff; border: none; border-radius: 7px;
-      font-size: 16px; margin: 16px 20px; padding: 10px 0; cursor: pointer;
-    }
-    .main { flex: 1; display: flex; flex-direction: column; }
-    .chat-header {
-      height: 50px; border-bottom: 1px solid #e5e5e5;
-      display: flex; align-items: center; padding: 0 24px; background: #fff;
-      font-size: 18px; font-weight: 500;
-    }
-    .chat-window {
-      flex: 1; overflow-y: auto; padding: 24px; background: #f6f8fa;
-      display: flex; flex-direction: column;
-    }
-    .msg-row { margin-bottom: 16px; }
-    .msg-user { color: #4169e1; font-weight: 500; margin-bottom: 4px; }
-    .msg-ai { color: #10b981; font-weight: 500; margin-bottom: 4px; }
-    .msg-text { background: #fff; border-radius: 8px; padding: 12px 16px; border: 1px solid #e5e5e5; }
-    .chat-input-area {
-      display: flex; padding: 16px 24px; background: #fff; border-top: 1px solid #e5e5e5;
-      align-items: center;
-      gap: 10px;
-    }
-    #fileInput {
-      display: none;
-    }
-    #uploadBtn {
-      background: #e6f7ff;
-      border: none;
-      border-radius: 5px;
-      padding: 0 14px;
-      height: 38px;
-      font-size: 18px;
-      color: #2077b3;
-      cursor: pointer;
-      margin-right: 0;
-      margin-left: 0;
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", Arial, sans-serif;
+      background: #f6f8fa;
       display: flex;
+      height: 100vh;
       align-items: center;
       justify-content: center;
     }
-    #uploadBtn:active {
-      background: #bae7ff;
+    .center-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #e5e5e5;
+      padding: 48px 36px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
     }
-    #msg-input { flex: 1; font-size: 16px; padding: 10px; border-radius: 6px; border: 1px solid #ccc; outline: none; }
-    #send-btn { margin-left: 0; padding: 0 24px; font-size: 16px; border: none; background: #10b981; color: #fff; border-radius: 6px; cursor: pointer; height: 38px; }
-    #send-btn:active { background: #11996b; }
-    .msg-text img {
-      max-width: 120px;
-      max-height: 120px;
-      border-radius: 7px;
-      margin: 8px 0 0 0;
-      display: block;
-      box-shadow: 0 1px 8px #ccc;
+    .center-box h1 {
+      font-size: 2.2rem;
+      color: #10b981;
+      margin-bottom: 26px;
+      font-weight: 600;
     }
-    .msg-text a {
-      color: #1a73e8;
-      text-decoration: underline;
+    .center-box .big-en {
+      font-size: 1.7rem;
+      font-weight: 500;
+      color: #212121;
+      margin-bottom: 16px;
+    }
+    .center-box .big-zh {
+      font-size: 1.3rem;
+      color: #666;
+      letter-spacing: 0.1em;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="sidebar">
-      <h2>对话列表</h2>
-      <div class="conversation-list" id="convList">
-        <!-- 会话列表动态渲染 -->
-      </div>
-      <button class="new-btn" onclick="newConversation()">+ 新对话</button>
-    </div>
-    <div class="main">
-      <div class="chat-header">AI自动生成博客系统</div>
-      <div class="chat-window" id="chatWindow"></div>
-      <div class="chat-input-area">
-        <input type="file" id="fileInput" multiple style="display:none" onchange="uploadFile()" />
-        <button id="uploadBtn" type="button" title="上传附件">
-          📎
-        </button>
-        <input id="msg-input" type="text" placeholder="请输入你想让AI做的事，比如“生成一篇科幻风格首页”..." autocomplete="off"/>
-        <button id="send-btn">发送</button>
-      </div>
-    </div>
+  <div class="center-box">
+    <h1>AI Blog System</h1>
+    <div class="big-en">Website under construction</div>
+    <div class="big-zh">网站正在建设中</div>
   </div>
-  <script>
-    // 本地会话存储结构: {id: {id, title, messages: [{role, content}], date}}
-    let conversations = {}; // 全部会话
-    let currentConvId = null;
-
-    // 工具：生成唯一对话ID
-    function newConvId() {
-      const d = new Date();
-      return d.toISOString().slice(0,10) + '_' + Date.now();
-    }
-
-    // 保存到localStorage
-    function saveConvs() {
-      localStorage.setItem('conversations', JSON.stringify(conversations));
-    }
-
-    // 加载历史会话
-    function loadConvs() {
-      try {
-        conversations = JSON.parse(localStorage.getItem('conversations') || '{}');
-      } catch { conversations = {}; }
-    }
-
-    // 渲染左侧会话栏
-    function renderConversationList() {
-      const convList = document.getElementById('convList');
-      // 按时间降序排列
-      const sorted = Object.values(conversations).sort((a, b) => b.date - a.date);
-      convList.innerHTML = sorted.map(conv => {
-        const title = conv.title || (conv.messages[0]?.content.slice(0, 16) || "新对话");
-        const dateStr = new Date(conv.date).toLocaleDateString().replace(/\//g, '-');
-        return `<button class="conversation${conv.id === currentConvId ? ' active' : ''}" onclick="selectConversation('${conv.id}')">
-          ${dateStr}<br><span style="font-size:13px;color:#888">${title}</span>
-        </button>`;
-      }).join('');
-    }
-
-    // 渲染聊天内容，支持图片/附件
-    function renderChatWindow() {
-      const chatWindow = document.getElementById('chatWindow');
-      const conv = conversations[currentConvId];
-      chatWindow.innerHTML = '';
-      if (!conv || !conv.messages.length) {
-        chatWindow.innerHTML = `<div style="color:#888">开始你的聊天吧</div>`;
-        return;
-      }
-      conv.messages.forEach(msg => {
-        const row = document.createElement('div');
-        row.className = 'msg-row';
-        let label = '';
-        if(msg.role === 'user') label = '<div class="msg-user">你</div>';
-        if(msg.role === 'ai') label = '<div class="msg-ai">Kimi</div>';
-        // Markdown图片转img，附件转链接
-        let html = msg.content
-          .replace(/!\[.*?\]\((.*?)\)/g, (match, url) => `<img src="${url}" alt="图片">`)
-          .replace(/\[附件\]\((.*?)\)/g, (match, url) => `<a href="${url}" target="_blank">附件下载</a>`);
-        row.innerHTML = label + '<div class="msg-text">' + html + '</div>';
-        chatWindow.appendChild(row);
-      });
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-
-    // 新建对话
-    function newConversation() {
-      const id = newConvId();
-      conversations[id] = {
-        id,
-        title: '新对话',
-        messages: [],
-        date: Date.now()
-      };
-      currentConvId = id;
-      saveConvs();
-      renderConversationList();
-      renderChatWindow();
-    }
-
-    // 切换对话
-    function selectConversation(id) {
-      currentConvId = id;
-      renderConversationList();
-      renderChatWindow();
-    }
-
-    // 添加消息
-    function appendMsg(role, text) {
-      const conv = conversations[currentConvId];
-      if (!conv) return;
-      conv.messages.push({role, content: text});
-      conv.date = Date.now();
-      // 自动设置标题为用户首句
-      if (conv.messages.length === 1 && role === 'user') conv.title = text.slice(0, 16);
-      saveConvs();
-      renderConversationList();
-      renderChatWindow();
-    }
-
-    // 发送消息
-    function send() {
-      const msgInput = document.getElementById('msg-input');
-      const text = msgInput.value.trim();
-      if (!text) return;
-      appendMsg('user', text);
-      msgInput.value = '';
-      fetch('/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({msg: text})
-      })
-      .then(r=>r.json())
-      .then(res=>{
-        appendMsg('ai', res.reply || 'AI没有返回内容');
-      })
-      .catch(e=>{
-        appendMsg('ai', '服务出错，请稍后再试');
-      });
-    }
-
-    document.getElementById('send-btn').onclick = send;
-    document.getElementById('msg-input').onkeydown = (e)=>{ if(e.key==='Enter') { send(); e.preventDefault(); } }
-
-    // 附件上传相关
-    document.getElementById('uploadBtn').onclick = function() {
-      document.getElementById('fileInput').click();
-    };
-
-    function uploadFile() {
-      const input = document.getElementById('fileInput');
-      if (!input.files.length) return;
-      const file = input.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(r=>r.json())
-      .then(res=>{
-        if (res.url) {
-          // 上传成功，自动插入图片/附件链接到输入框
-          const msgInput = document.getElementById('msg-input');
-          if (/\.(png|jpg|jpeg|gif|webp)$/i.test(res.url)) {
-            msgInput.value += `![图片](${res.url}) `;
-          } else {
-            msgInput.value += `[附件](${res.url}) `;
-          }
-          alert('上传成功：' + res.url);
-        } else {
-          alert('上传失败！');
-        }
-      })
-      .catch(()=>alert('文件上传出错！'));
-      input.value = '';
-    }
-
-    // 初始加载
-    loadConvs();
-    if (Object.keys(conversations).length === 0) {
-      newConversation();
-    } else {
-      // 默认选择最新的
-      const ids = Object.keys(conversations).sort((a,b)=>conversations[b].date-conversations[a].date);
-      selectConversation(ids[0]);
-    }
-
-    // 欢迎语只在空会话时显示
-    if (conversations[currentConvId].messages.length === 0) appendMsg('ai', '你好，我是Kimi，可以帮你自动生成并更新博客页面！');
-  </script>
 </body>
 </html>
