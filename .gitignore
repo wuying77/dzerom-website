@@ -4,4 +4,8 @@ node_modules/
 .DS_Store
 public/uploads/
 *.bak
+<<<<<<< HEAD
 *.tmp
+=======
+*.tmp
+>>>>>>> 7bbcc5b0a28260d6ef78d6bb962029687bf4aab5
