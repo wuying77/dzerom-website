@@ -1,34 +1,37 @@
 {
-  "name": "my-ai-web",
-  "version": "1.0.0",
-  "description": "AI自动生成博客系统，支持图片上传与AI分析",
-  "main": "index.js",
+  "name": "project_template_react",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "build": "echo 'no build step'"
-  },
-  "keywords": [
-    "ai",
-    "blog",
-    "express",
-    "image-upload",
-    "moonshot",
-    "kimi"
-  ],
-  "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=22"
+    "dev:client": "vite --host --port 3000",
+    "dev": "pnpm dev:client",
+    "build:client": "vite build --outDir dist/static",
+    "build": "rm -rf dist && pnpm build:client && cp package.json dist && touch dist/build.flag"
   },
   "dependencies": {
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "mime-types": "^2.1.35",
-    "multer": "^2.0.1",
-    "node-fetch": "^2.7.0"
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.9.2",
+    "leaflet": "^1.9.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^7.3.0",
+    "recharts": "^2.15.1",
+    "sonner": "^2.0.2",
+    "tailwind-merge": "^3.0.2",
+    "three": "^0.162.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
