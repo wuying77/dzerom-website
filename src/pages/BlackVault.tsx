@@ -5,9 +5,11 @@ import PasswordInput from '@/components/black-vault/PasswordInput';
 import CycleSimulation from '@/components/black-vault/CycleSimulation';
 import TechEvents from '@/components/black-vault/TechEvents';
 import SecretFiles from '@/components/black-vault/SecretFiles';
+import UploadPanel from '@/components/UploadPanel';
 
 export default function BlackVault() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-green-500 font-courier">
@@ -17,12 +19,20 @@ export default function BlackVault() {
         <h1 className="text-4xl font-cinzel mb-12 text-center">黑档案室</h1>
         
         {!isAuthenticated ? (
-          <PasswordInput onSuccess={() => setIsAuthenticated(true)} />
+          <PasswordInput 
+            onSuccess={(isAdmin) => {
+              setIsAuthenticated(true);
+              setIsSuperAdmin(isAdmin);
+            }} 
+          />
         ) : (
           <div className="space-y-12">
-            <CycleSimulation />
-            <TechEvents />
-            <SecretFiles />
+            {isSuperAdmin && <UploadPanel />}
+            <div className="space-y-12">
+              <CycleSimulation />
+              <TechEvents />
+              <SecretFiles />
+            </div>
           </div>
         )}
       </main>

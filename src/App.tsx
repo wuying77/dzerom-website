@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import CosmicPhaseTheory from "@/pages/CosmicPhaseTheory";
 import SerpentArchive from "@/pages/SerpentArchive";
 import BlackVault from "@/pages/BlackVault";
+import ArticleDetail from "@/components/cosmic-phase/ArticleDetail";
 import { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext({
@@ -48,9 +49,12 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cosmic-phase" element={<CosmicPhaseTheory />} />
+          <Route path="/cosmic-phase/articles/:id" element={<ArticleDetail />} />
           <Route path="/serpent-archive" element={<SerpentArchive />} />
+          <Route path="/serpent-archive/serpent-tech" element={<SerpentArchive />} />
           <Route path="/black-vault" element={<BlackVault />} />
           <Route path="/awakening" element={<AwakeningGuide />} />
+          <Route path="/awakening/articles/:id" element={<ArticleDetail />} />
           <Route path="/about" element={
             <div className="min-h-screen bg-black text-white">
               <Navbar />
