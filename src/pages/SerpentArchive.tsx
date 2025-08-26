@@ -3,10 +3,15 @@ import Footer from '@/components/Footer';
 import RelicHeatmap from '@/components/serpent-archive/RelicHeatmap';
 import MythologyGraph from '@/components/serpent-archive/MythologyGraph';
 import Artifact3DViewer from '@/components/serpent-archive/Artifact3DViewer';
-import DocumentVideos from '@/components/serpent-archive/DocumentVideos';
+import SerpentArticles from '@/components/serpent-archive/SerpentArticles';
+import SerpentTechArticle from '@/components/serpent-archive/SerpentTechArticle';
 import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 export default function SerpentArchive() {
+  const location = useLocation();
+  const isArticlePage = location.pathname.startsWith('/serpent-archive/article');
+
   useEffect(() => {
     // 添加脉冲动画样式
     const style = document.createElement('style');
@@ -38,20 +43,27 @@ export default function SerpentArchive() {
       <Navbar />
       
       <main className="container mx-auto px-4 pt-24 pb-32">
-        <h1 className="text-4xl font-cinzel mb-12 text-center">蛇神文明档案库</h1>
-        
-        <div className="space-y-12">
-          <div className="h-[500px]">
-            <RelicHeatmap />
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <MythologyGraph />
-            <Artifact3DViewer />
-          </div>
-          
-          <DocumentVideos />
-        </div>
+        <Routes>
+          <Route path="/" element={
+            <>
+              <h1 className="text-4xl font-cinzel mb-12 text-center">蛇神文明档案库</h1>
+                
+              <div className="space-y-12">
+                <div className="h-[500px]">
+                  <RelicHeatmap />
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <MythologyGraph />
+                  <Artifact3DViewer />
+                </div>
+                
+                <SerpentArticles />
+              </div>
+            </>
+          } />
+          <Route path="/article/:id" element={<SerpentTechArticle />} />
+        </Routes>
       </main>
       
       <Footer />

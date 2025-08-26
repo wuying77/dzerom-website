@@ -1,7 +1,7 @@
 export default function TheorySummary({ isDark }: { isDark: boolean }) {
   return (
-    <section className={`p-8 rounded-lg ${isDark ? 'bg-gray-900' : 'bg-purple-800'}`}>
-      <h2 className="text-2xl font-cinzel mb-6">理论总纲</h2>
+     <section className={`p-8 rounded-lg ${isDark ? 'bg-gray-900' : 'bg-white'} border border-green-500/30`}>
+      <h2 className="text-2xl font-cinzel mb-6 text-green-500">理论总纲</h2>
       
       <div className="grid md:grid-cols-2 gap-8">
         <div>

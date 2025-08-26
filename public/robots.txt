@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /black-vault
+Disallow: /uploads/
+Allow: /
+Crawl-delay: 10
+Sitemap: https://dzerom.xin/sitemap.xml

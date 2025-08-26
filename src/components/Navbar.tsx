@@ -28,6 +28,7 @@ export default function Navbar() {
             value={language}
             onChange={handleLanguageChange}
             className="bg-black border border-green-500 text-green-500 px-2 py-1 rounded font-courier"
+            aria-label="Language selector"
           >
             <option value="zh">中文</option>
             <option value="en">English</option>

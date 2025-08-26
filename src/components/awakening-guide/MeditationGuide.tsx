@@ -28,6 +28,21 @@ export default function MeditationGuide() {
     return () => clearInterval(interval);
   }, [isBreathing, breathPhase]);
 
+  const handleStepClick = (index: number) => {
+    setCurrentStep(index);
+    if (index >= 1 && index <= 5) { // 步骤2-6
+      setIsBreathing(true);
+      setBreathPhase('inhale'); // 重置为吸气阶段
+    }
+  };
+
+  const toggleBreathing = () => {
+    setIsBreathing(!isBreathing);
+    if (!isBreathing && currentStep >= 1 && currentStep <= 5) {
+      setBreathPhase('inhale'); // 重置为吸气阶段
+    }
+  };
+
   return (
     <section className="p-6 bg-black/30 rounded-lg border border-green-500/30">
       <h2 className="text-2xl font-cinzel mb-4">冥想指南</h2>
@@ -37,15 +52,15 @@ export default function MeditationGuide() {
           {steps.map((step, index) => (
             <div 
               key={index}
-              className={`p-4 rounded ${currentStep === index ? 'bg-green-500/10 border border-green-500' : 'bg-black/20'}`}
-              onClick={() => setCurrentStep(index)}
+              className={`p-4 rounded ${currentStep === index ? 'bg-green-500/10 border border-green-500' : 'bg-black/20'} cursor-pointer`}
+              onClick={() => handleStepClick(index)}
             >
               <span className="font-courier">步骤 {index + 1}:</span> {step}
             </div>
           ))}
           
           <button
-            onClick={() => setIsBreathing(!isBreathing)}
+            onClick={toggleBreathing}
             className="mt-4 px-4 py-2 bg-green-500/10 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black transition-colors"
           >
             {isBreathing ? '暂停呼吸练习' : '开始呼吸练习'}
@@ -54,7 +69,7 @@ export default function MeditationGuide() {
         
         <div className="flex items-center justify-center">
           <div 
-            className={`w-40 h-40 rounded-full flex items-center justify-center transition-all duration-1000 ease-in-out ${
+            className={`w-40 h-40 rounded-full flex items-center justify-center transition-all duration-1000 ease-in-out cursor-pointer ${
               breathPhase === 'inhale' ? 'bg-green-500/30 scale-110' : 
               breathPhase === 'hold' ? 'bg-yellow-500/30 scale-100' : 
               'bg-red-500/30 scale-90'
@@ -63,6 +78,7 @@ export default function MeditationGuide() {
               transitionDuration: breathPhase === 'inhale' ? '4s' : 
                                breathPhase === 'hold' ? '2s' : '6s' 
             }}
+            onClick={toggleBreathing}
           >
             <span className="font-courier">
               {isBreathing ? (
