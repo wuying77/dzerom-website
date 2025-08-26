@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 User-agent: *
 Disallow: /black-vault
 Disallow: /uploads/
 Allow: /
 Crawl-delay: 10
+=======
+User-agent: *
+Disallow: /black-vault
+Disallow: /uploads/
+Allow: /
+Crawl-delay: 10
+>>>>>>> 8ccc4680031f2803d6a8f583cf72c2c33e43ad77
 Sitemap: https://dzerom.xin/sitemap.xml
