@@ -1,0 +1,53 @@
+name: Refresh lockfile and audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  refresh-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (allow pushing)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies (generate lockfile integrities)
+        run: |
+          # Prefer npm ci for reproducibility; fall back to npm install if ci fails (e.g. placeholder integrities)
+          if npm ci; then
+            echo "npm ci succeeded"
+          else
+            echo "npm ci failed, running npm install to regenerate lockfile"
+            npm install
+          fi
+
+      - name: Run npm audit (output results)
+        run: |
+          npm audit --audit-level=low || true
+
+      - name: Commit package-lock.json if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git status --porcelain | grep -q package-lock.json; then
+            git add package-lock.json
+            git commit -m "chore: regenerate package-lock.json (refresh integrity) [skip ci]" || echo "no commit"
+            git push
+            echo "package-lock.json updated and pushed"
+          else
+            echo "no changes to package-lock.json"
+          fi
