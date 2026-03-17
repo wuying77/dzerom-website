@@ -48,30 +48,30 @@ importers:
         specifier: ^3.24.2
         version: 3.25.67
     devDependencies:
-      '@types.react':
+      '@types/react':
         specifier: ^18.3.12
-        version: 18.3.23
-      '@types.react-dom':
+        version: 18.3.12
+      '@types/react-dom':
         specifier: ^18.3.1
-        version: 18.3.7(@types.react@18.3.23)
+        version: 18.3.1(@types/react@18.3.12)
       '@vitejs/plugin-react':
         specifier: ^4.3.4
-        version: 4.5.2(vite@6.3.6(jiti@1.21.7)(yaml@2.8.0))
+        version: 4.5.2(vite@6.3.10(jiti@1.21.7)(yaml@2.8.0))
       autoprefixer:
         specifier: ^10.4.21
-        version: 10.4.21(postcss@8.5.6)
+        version: 10.4.20(postcss@8.5.31)
       cpy-cli:
         specifier: ^5.0.0
         version: 5.0.0
       postcss:
-        specifier: ^8.5.3
-        version: 8.5.6
+        specifier: ^8.5.31
+        version: 8.5.31
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
       tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.17
+        specifier: ^3.4.19
+        version: 3.4.19
       touch-cli:
         specifier: ^0.0.1
         version: 0.0.1
@@ -79,11 +79,11 @@ importers:
         specifier: ~5.7.2
         version: 5.7.3
       vite:
-        specifier: ~6.3.6
-        version: 6.3.6(jiti@1.21.7)(yaml@2.8.0)
+        specifier: ~6.3.10
+        version: 6.3.10(jiti@1.21.7)(yaml@2.8.0)
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.7.3)(vite@6.3.6(jiti@1.21.7)(yaml@2.8.0))
+        version: 5.1.4(typescript@5.7.3)(vite@6.3.10(jiti@1.21.7)(yaml@2.8.0))
 
 packages:
 
@@ -212,7 +212,7 @@ packages:
     resolution: {integrity: sha512-1iT4FVL0dJ76/q1wd7XDsRSW+oLoquptvh4CLR4kITDtqi2e/xwXwdCVH8hVHU43wgJdsq7Gxuzcs6Iq/7bxQ==}
     engines: {node: '>=18'}
     cpu: [x64]
-    os: [darwin]...
+    os: [darwin]
 
   glob@11.1.0:
     resolution: {integrity: sha512-zI6L5uLd6pPKzF3D0A6eW7aV49x9rZcW8IqV2g0J7bA8k3H3M5tJFL2gd8lZbEEk6pYd3bfGf7Jf0V6zJ9VdOQ==}
