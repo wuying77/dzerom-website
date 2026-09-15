@@ -18,6 +18,8 @@ jobs:
         with:
           persist-credentials: true
           fetch-depth: 0
+          # Important for PRs so we can push back to the head branch
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -46,7 +48,12 @@ jobs:
           if git status --porcelain | grep -q package-lock.json; then
             git add package-lock.json
             git commit -m "chore: regenerate package-lock.json (refresh integrity) [skip ci]" || echo "no commit"
-            git push
+            # Handle both push and pull_request events
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              git push
+            fi
             echo "package-lock.json updated and pushed"
           else
             echo "no changes to package-lock.json"
